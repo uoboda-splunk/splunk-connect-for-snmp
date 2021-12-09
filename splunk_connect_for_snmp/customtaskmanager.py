@@ -61,7 +61,11 @@ class CustomPeriodicTaskManager:
             periodic_document = periodic.get(name=p.name)
             if not periodic_document.enabled:
                 periodic_document.enabled = True
-            periodic_document.save()
+            for i in range(3):
+                try:
+                    periodic_document.save()
+                except Exception as e:
+                    logger.info(f"Saving task didn't work because of: {e}. Retrying...")
 
     def manage_task(self, run_immediately_if_new: bool = False, **task_data) -> None:
         periodic = PeriodicTask.objects(name=task_data["name"])

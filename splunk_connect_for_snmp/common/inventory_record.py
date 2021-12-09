@@ -150,11 +150,8 @@ class InventoryRecord:
     def walk_interval(self, value):
         if value == None:
             self._walk_interval = 42000
-        v = int(value)
-        if v < 1800:
-            self._walk_interval = 1800
-        if v > 42000:
-            self._walk_interval = 42000
+        else:
+            self._walk_interval = int(value)
 
     profiles: List[str] = []
     _profiles: List[str] = field(init=False, repr=False)

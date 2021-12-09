@@ -94,6 +94,7 @@ def load():
         for source_record in ir_reader:
 
             ir = InventoryRecord(**source_record)
+            logger.info(f"ir: {ir.asdict()}")
             try:
                 if ir.delete:
                     periodic_obj.delete_task(ir.address)
@@ -113,7 +114,9 @@ def load():
                         continue
 
                     task_config = gen_walk_task(ir)
+                    logger.info(f"Before manage task")
                     periodic_obj.manage_task(**task_config)
+                    logger.info(f"After manage task")
 
             except:
                 inventory_errors = True

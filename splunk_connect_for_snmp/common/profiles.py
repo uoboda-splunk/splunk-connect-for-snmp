@@ -32,6 +32,7 @@ logger = get_task_logger(__name__)
 
 
 def load_profiles():
+    logger.info("START LOAD_PROFILES")
     active_profiles = {}
     pkg_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "..", "profiles"
@@ -64,5 +65,5 @@ def load_profiles():
                         active_profiles[key] = profile
     except FileNotFoundError:
         pass
-
+    logger.info(f"Loaded active_profiles: {active_profiles}")
     return active_profiles
