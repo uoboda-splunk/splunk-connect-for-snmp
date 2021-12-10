@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "splunk-connect-for-snmp.inventory.labels" . | nindent 4 }}
 spec:
-  ttlSecondsAfterFinished: 300
+  ttlSecondsAfterFinished: 20
   template:
     metadata:
       {{- with .Values.inventory.podAnnotations }}
