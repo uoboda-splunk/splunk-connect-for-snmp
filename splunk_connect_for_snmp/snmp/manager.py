@@ -165,6 +165,8 @@ def fill_empty_value(index_number, metric_value):
 
 
 def extract_index_number(index):
+    if not index:
+        return 0
     index_number = index[0]._value
     if isinstance(index_number, typing.Tuple):
         index_number = index_number[0]
@@ -356,7 +358,7 @@ class Poller(Task):
                         if len(vb) == 2:
                             if (
                                 vb[0] not in required_bulk
-                                or vb[1] not in required_bulk[vb[0]]
+                                or (required_bulk[vb[0]] and vb[1] not in required_bulk[vb[0]])
                             ):
                                 if vb[0] not in required_bulk:
                                     required_bulk[vb[0]] = [vb[1]]
@@ -387,7 +389,7 @@ class Poller(Task):
                                 )
                                 get_mapping[f"{vb[0]}:{vb[1]}:{vb[2]}"] = profile
                             else:
-                                if vb[1] not in required_bulk[vb[0]]:
+                                if not required_bulk[vb[0]] or vb[1] not in required_bulk[vb[0]]:
                                     if vb[0] not in required_get:
                                         required_get[vb[0]] = {vb[1]: [vb[2]]}
                                     elif vb[1] not in required_get[vb[0]]:

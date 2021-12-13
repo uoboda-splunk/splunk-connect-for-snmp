@@ -30,13 +30,13 @@ inventory:
     runAsUser: 10001
     runAsGroup: 10001
 
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
+  resources: {}
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 200m
+    #   memory: 256Mi
 
   nodeSelector: {}
 
@@ -69,13 +69,13 @@ scheduler:
     runAsUser: 10001
     runAsGroup: 10001
 
-  resources:
-    limits:
-      cpu: 2
-      memory: 1Gi
-    requests:
-      cpu: 1
-      memory: 256Mi
+  resources: {}
+    # limits:
+    #   cpu: 1
+    #   memory: 1Gi
+    # requests:
+    #   cpu: 100m
+    #   memory: 256Mi
 
   autoscaling:
     enabled: false
@@ -91,6 +91,7 @@ scheduler:
   podAntiAffinity: soft
 
 worker:
+  replicaCount: 2
   concurrency: 4
   nameOverride: ""
   fullnameOverride: ""
@@ -118,13 +119,13 @@ worker:
     runAsUser: 10001
     runAsGroup: 10001
 
-  resources:
-    limits:
-      cpu: 2
-      memory: 512Mi
-    requests:
-      cpu: 1
-      memory: 256Mi
+  resources: {}
+    # limits:
+    #   cpu: 2
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 200m
+    #   memory: 256Mi
 
   autoscaling:
     enabled: false
@@ -145,8 +146,9 @@ poller:
     address,version,community,walk_interval,profiles,SmartProfiles,delete
 
 traps:
+  replicaCount: 2
   usernameSecrets: []
-  securityEngineId: "8000000903000A397056B8AC"
+  securityEngineId: "80003a8c04"
 
   communities: {}
   nameOverride: ""
@@ -196,13 +198,13 @@ traps:
     #    hosts:
     #      - chart-example.local
 
-  resources:
-    limits:
-      cpu: 2
-      memory: 1Gi
-    requests:
-      cpu: 1
-      memory: 256Mi
+  resources: {}
+    # limits:
+    #   cpu: 1
+    #   memory: 1Gi
+    # requests:
+    #   cpu: 200m
+    #   memory: 256Mi
 
   autoscaling:
     enabled: false
@@ -221,7 +223,7 @@ traps:
 ### Please do not modify below values, unless you know what you're doing! ###
 #############################################################################
 mongodb:
-  architecture: "replicaset"
+  architecture: "standalone"
   ## @section Global parameters
   ## Global Docker image parameters
   ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
@@ -252,13 +254,13 @@ mongodb:
   ##
   rbac:
     create: true
-  resources:
-    limits:
-      cpu: 500m
-      memory: 768Mi
-    requests:
-      cpu: 100m
-      memory: 512Mi
+  resources: {}
+    # limits:
+    #   cpu: 1000m
+    #   memory: 768Mi
+    # requests:
+    #   cpu: 250m
+    #   memory: 512Mi
 
   ## @section Volume Permissions parameters
 
@@ -302,13 +304,13 @@ rabbitmq:
   # ## @param resources.limits The resources limits for RabbitMQ containers
   # ## @param resources.requests The requested resources for RabbitMQ containers
   # ##
-  resources:
-    limits:
-      cpu: 1000m
-      memory: 2Gi
-    requests:
-      cpu: 1000m
-      memory: 2Gi
+  resources: {}
+    # limits:
+    #   cpu: 1000m
+    #   memory: 2Gi
+    # requests:
+    #   cpu: 250m
+    #   memory: 1Gi
 
   ## @section Persistence parameters
 
@@ -344,7 +346,7 @@ rabbitmq:
     ## @param persistence.size PVC Storage Request for RabbitMQ data volume
     ## If you change this value, you might have to adjust `rabbitmq.diskFreeLimit` as well
     ##
-    size: 8Gi
+    size: 4Gi
 
     # ## @param persistence.volumes Additional volumes without creating PVC
     # ##  - name: volume_name
