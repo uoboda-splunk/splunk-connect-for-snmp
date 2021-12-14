@@ -46,6 +46,13 @@ class CustomPeriodicTaskManager:
                 periodic_document.delete()
                 logger.debug("Deleting Schedule")
 
+    def delete_disabled_poll_tasks(self):
+        periodic = PeriodicTask.objects(enabled=False)
+        for p in periodic:
+            periodic_document = periodic.get(name=p.name)
+            periodic_document.delete()
+            logger.debug("Deleting Schedule")
+
     def enable_tasks(self, target):
         periodic = PeriodicTask.objects(target=target)
         for p in periodic:
