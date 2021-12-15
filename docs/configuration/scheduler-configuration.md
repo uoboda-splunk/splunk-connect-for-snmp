@@ -1,7 +1,7 @@
 # Scheduler configuration
 Scheduler is a service with is responsible for manager schedules for SNMP walks and GETs. Schedules definition 
 are store in Mongo DB. 
- 
+
 ### Scheduler configuration file
 
 Scheduler configuration is keep in `values.yaml` file in section `scheduler`.  To downland example file execute command:
@@ -163,6 +163,8 @@ scheduler:
           - ['SNMPv2-MIB', 'sysName']
 ``` 
 
+NOTE: Be aware that profile changes may not be reflected immediately. It can take up to 5 minutes for changes to propagate. 
+There is also 5 minute TTL for an inventory pod. Basically SC4SNMP allows one inventory upgrade and then block updates for next 5 minutes
 
 
 
