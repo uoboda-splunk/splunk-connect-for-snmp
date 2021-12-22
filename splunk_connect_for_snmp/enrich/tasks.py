@@ -69,12 +69,10 @@ class EnrichTask(Task):
                     logger.debug(f"new_value = {new_value}  old_value = {old_value}")
                     if int(new_value) < int(old_value):
                         task_config = {
-                            "name": f'sc4snmp;{address};walk',
+                            "name": f"sc4snmp;{address};walk",
                             "run_immediately": True,
                         }
-                        logger.info(
-                            f'Detected restart of {address}, triggering walk'
-                        )
+                        logger.info(f"Detected restart of {address}, triggering walk")
                         periodic_obj = customtaskmanager.CustomPeriodicTaskManager()
                         periodic_obj.manage_task(**task_config)
 

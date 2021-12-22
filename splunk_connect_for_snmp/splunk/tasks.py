@@ -115,7 +115,7 @@ def do_send(data, destination_url, self):
         try:
             response = self.session.post(
                 destination_url,
-                data="\n".join(data[i: i + SPLUNK_HEC_CHUNK_SIZE]),
+                data="\n".join(data[i : i + SPLUNK_HEC_CHUNK_SIZE]),
                 timeout=60,
             )
         except ConnectionError:

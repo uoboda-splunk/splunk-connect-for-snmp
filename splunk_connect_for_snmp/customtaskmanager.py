@@ -78,7 +78,7 @@ class CustomPeriodicTaskManager:
             for key, value in task_data.items():
                 if key == "interval":
                     if not periodic_document.interval == PeriodicTask.Interval(
-                            **task_data["interval"]
+                        **task_data["interval"]
                     ):
                         periodic_document.interval = PeriodicTask.Interval(
                             **task_data["interval"]
@@ -86,7 +86,7 @@ class CustomPeriodicTaskManager:
                         isChanged = True
                 elif key == "crontab":
                     if not periodic_document.crontab == PeriodicTask.Interval(
-                            **task_data["crontab"]
+                        **task_data["crontab"]
                     ):
                         periodic_document.crontab = PeriodicTask.Interval(
                             **task_data["crontab"]

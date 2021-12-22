@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 import time
-
 import typing
 
 from splunk_connect_for_snmp.common.profiles import load_profiles
@@ -37,7 +36,6 @@ from celery.utils.log import get_task_logger
 
 from splunk_connect_for_snmp import customtaskmanager
 from splunk_connect_for_snmp.common.hummanbool import human_bool
-
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -135,8 +133,12 @@ def inventory_setup_poller(self, work):
                             profile["condition"]["field"].replace(".", "|")
                         ]
 
-                        if not isinstance(profile["condition"]["patterns"], typing.List):
-                            logger.warn(f"Patterns for profile {profile_name} must be a list")
+                        if not isinstance(
+                            profile["condition"]["patterns"], typing.List
+                        ):
+                            logger.warn(
+                                f"Patterns for profile {profile_name} must be a list"
+                            )
                         else:
                             for pattern in profile["condition"]["patterns"]:
 

@@ -102,17 +102,19 @@ def cbFun(snmpEngine, stateReference, contextEngineId, contextName, varBinds, cb
     )
 
     execContext = snmpEngine.observer.getExecutionContext(
-        'rfc3412.receiveMessage:request'
+        "rfc3412.receiveMessage:request"
     )
 
     data = []
-    device_ip = execContext['transportAddress'][0]
+    device_ip = execContext["transportAddress"][0]
 
     for name, val in varBinds:
         data.append((name.prettyPrint(), val.prettyPrint()))
 
     work = {"data": data, "host": device_ip}
-    my_chain = chain(trap_task_signature(work), prepare_task_signature(), send_task_signature())
+    my_chain = chain(
+        trap_task_signature(work), prepare_task_signature(), send_task_signature()
+    )
     result = my_chain.apply_async()
 
 

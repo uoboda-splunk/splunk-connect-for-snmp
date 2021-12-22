@@ -29,6 +29,15 @@ on:
       - "develop"
       - "next"
 jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Install actionlint
+        run: |
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/v1.6.3/scripts/download-actionlint.bash)
+      - uses: pre-commit/action@v2.0.3
   release:
     name: Release
     runs-on: ubuntu-latest
