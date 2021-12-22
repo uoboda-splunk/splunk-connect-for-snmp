@@ -19,8 +19,7 @@ import json
 import socket
 from dataclasses import InitVar, dataclass, field
 from ipaddress import IPv4Address, IPv6Address
-from typing import Dict, List, Optional, Union
-from urllib.parse import urlparse
+from typing import List
 
 from splunk_connect_for_snmp.common.hummanbool import human_bool
 
@@ -39,9 +38,9 @@ class InventoryRecord:
     @address.setter
     def address(self, value: str):
         if value is None:
-            raise ValueError(f"field address cannot be null")
+            raise ValueError("field address cannot be null")
         if value.startswith("#"):
-            raise ValueError(f"field address cannot be commented")
+            raise ValueError("field address cannot be commented")
         else:
             test = None
             try:
@@ -73,7 +72,7 @@ class InventoryRecord:
 
     @port.setter
     def port(self, value):
-        if value == None or (isinstance(value, str) and value.strip() == ""):
+        if value is None or (isinstance(value, str) and value.strip() == ""):
             self._port = 161
         else:
             if not isinstance(value, int):
@@ -92,7 +91,7 @@ class InventoryRecord:
 
     @version.setter
     def version(self, value):
-        if value == None or value.strip() == "":
+        if value is None or value.strip() == "":
             self._version = "2c"
         else:
             if value not in ("2c", "3"):
@@ -108,7 +107,7 @@ class InventoryRecord:
 
     @community.setter
     def community(self, value):
-        if value == None or (isinstance(value, str) and value.strip() == ""):
+        if value is None or (isinstance(value, str) and value.strip() == ""):
             self._community = None
         else:
             self._community = value
@@ -122,7 +121,7 @@ class InventoryRecord:
 
     @secret.setter
     def secret(self, value):
-        if value == None or (isinstance(value, str) and value.strip() == ""):
+        if value is None or (isinstance(value, str) and value.strip() == ""):
             self._secret = None
         else:
             self._secret = value
@@ -136,7 +135,7 @@ class InventoryRecord:
 
     @securityEngine.setter
     def securityEngine(self, value):
-        if value == None or (isinstance(value, str) and value.strip() == ""):
+        if value is None or (isinstance(value, str) and value.strip() == ""):
             self._securityEngine = None
         else:
             self._securityEngine = value
@@ -186,7 +185,7 @@ class InventoryRecord:
 
     @SmartProfiles.setter
     def SmartProfiles(self, value):
-        if value == None or (isinstance(value, str) and value.strip() == ""):
+        if value is None or (isinstance(value, str) and value.strip() == ""):
             self._SmartProfiles = True
         else:
             self._SmartProfiles = human_bool(value)
@@ -200,7 +199,7 @@ class InventoryRecord:
 
     @delete.setter
     def delete(self, value):
-        if value == None or (isinstance(value, str) and value.strip() == ""):
+        if value is None or (isinstance(value, str) and value.strip() == ""):
             self._delete = False
         else:
             self._delete = human_bool(value)

@@ -224,7 +224,6 @@ class Poller(Task):
             )
 
     def dowork(self, address: str, walk: bool = False, profiles: List[str] = None):
-        result = {}
 
         if time.time() - self.last_modified > PROFILES_RELOAD_DELAY:
             self.profiles = load_profiles()
@@ -475,7 +474,7 @@ class Poller(Task):
                     }
             else:
                 found, mib = self.isMIBKnown(id, oid)
-                if not mib in remotemibs:
+                if mib not in remotemibs:
                     remotemibs.append(mib)
                 if found:
                     retry = True

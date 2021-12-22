@@ -14,10 +14,8 @@
 # limitations under the License.
 #
 import os
-import sys
-from typing import Union
+from typing import Optional, Union
 
-from pysnmp.error import PySnmpError
 from pysnmp.hlapi import (
     CommunityData,
     ContextData,
@@ -26,8 +24,6 @@ from pysnmp.hlapi import (
     UsmUserData,
     getCmd,
 )
-from pysnmp.proto.api import v2c
-from pysnmp.proto.rfc1902 import OctetString
 from pysnmp.smi.rfc1902 import ObjectIdentity, ObjectType
 
 from splunk_connect_for_snmp.common.inventory_record import InventoryRecord
@@ -39,7 +35,7 @@ UDP_CONNECTION_TIMEOUT = int(os.getenv("UDP_CONNECTION_TIMEOUT", 1))
 
 def getSecretValue(
     location: str, key: str, default: str = None, required: bool = False
-) -> str:
+) -> Optional[str]:
     source = os.path.join(location, key)
     result = default
     if os.path.exists(source):

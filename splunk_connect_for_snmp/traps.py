@@ -115,7 +115,7 @@ def cbFun(snmpEngine, stateReference, contextEngineId, contextName, varBinds, cb
     my_chain = chain(
         trap_task_signature(work), prepare_task_signature(), send_task_signature()
     )
-    result = my_chain.apply_async()
+    my_chain.apply_async()
 
 
 app.autodiscover_tasks(
