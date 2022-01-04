@@ -72,6 +72,7 @@ def walk(self, skip_init=False, **kwargs):
     work = {}
     work["time"] = time.time()
     work["address"] = address
+    work["port"] = port
     work["result"] = result
 
     return work
@@ -103,6 +104,7 @@ def poll(self, skip_init=False, **kwargs):
     work = {}
     work["time"] = time.time()
     work["address"] = address
+    work["port"] = port
     work["result"] = result
     work["detectchange"] = False
     work["frequency"] = kwargs["frequency"]
