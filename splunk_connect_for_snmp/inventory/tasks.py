@@ -58,6 +58,7 @@ class InventoryTask(Task):
 @shared_task(bind=True, base=InventoryTask)
 def inventory_setup_poller(self, work):
     address = work["address"]
+    port = work["port"]
     if time.time() - self.last_modified > PROFILES_RELOAD_DELAY:
         self.profiles = load_profiles()
         self.last_modified = time.time()
@@ -71,37 +72,38 @@ def inventory_setup_poller(self, work):
     mongo_inventory = mongo_db.inventory
     targets_collection = mongo_db.targets
 
-    ir = get_inventory(mongo_inventory, address)
+    ir = get_inventory(mongo_inventory, address, port)
 
     target = targets_collection.find_one(
-        {"address": address},
+        {"address": address, "port": port},
         {"target": True, "state": True, "config": True},
     )
     assigned_profiles = assign_profiles(ir, self.profiles, target)
 
     active_schedules: list[str] = []
     for period in assigned_profiles:
-        task_config = generate_poll_task_definition(active_schedules, address, assigned_profiles, period)
+        task_config = generate_poll_task_definition(active_schedules, address, port, assigned_profiles, period)
         periodic_obj.manage_task(**task_config)
 
     periodic_obj.delete_unused_poll_tasks(f"{address}", active_schedules)
     periodic_obj.delete_disabled_poll_tasks()
 
 
-def generate_poll_task_definition(active_schedules, address, assigned_profiles, period):
+def generate_poll_task_definition(active_schedules, address, port, assigned_profiles, period):
     run_immediately: bool = False
     if period > 300:
         run_immediately = True
-    name = f"sc4snmp;{address};{period};poll"
+    name = f"sc4snmp;{address}:{port};{period};poll"
     period_profiles = set(assigned_profiles[period])
     active_schedules.append(name)
     task_config = {
         "name": name,
         "task": "splunk_connect_for_snmp.snmp.tasks.poll",
-        "target": f"{address}",
+        "target": f"{address}:{port}",
         "args": [],
         "kwargs": {
             "address": address,
+            "port": port,
             "profiles": period_profiles,
             "frequency": period,
         },

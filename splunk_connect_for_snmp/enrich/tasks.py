@@ -52,7 +52,7 @@ def chunk(it, size):
 
 
 # check if sysUpTime decreased, if so trigger new walk
-def check_restart(current_target, result, targets_collection, address):
+def check_restart(current_target, result, targets_collection, address, port):
     for group_key, group_dict in result.items():
         if "metrics" in group_dict and SYS_UP_TIME in group_dict["metrics"]:
             sysuptime = group_dict["metrics"][SYS_UP_TIME]
@@ -64,11 +64,11 @@ def check_restart(current_target, result, targets_collection, address):
                 logger.debug(f"new_value = {new_value}  old_value = {old_value}")
                 if int(new_value) < int(old_value):
                     task_config = {
-                        "name": f'sc4snmp;{address};walk',
+                        "name": f'sc4snmp;{address}:{port};walk',
                         "run_immediately": True,
                     }
                     logger.info(
-                        f'Detected restart of {address}, triggering walk'
+                        f'Detected restart of {address}:{port}, triggering walk'
                     )
                     periodic_obj = customtaskmanager.CustomPeriodicTaskManager()
                     periodic_obj.manage_task(**task_config)
@@ -80,7 +80,7 @@ def check_restart(current_target, result, targets_collection, address):
             }
 
             targets_collection.update_one(
-                {"address": address}, {"$set": {"sysUpTime": state}}, upsert=True
+                {"address": address, "port": port}, {"$set": {"sysUpTime": state}}, upsert=True
             )
 
 
@@ -92,16 +92,17 @@ class EnrichTask(Task):
 @shared_task(bind=True, base=EnrichTask)
 def enrich(self, result):
     address = result["address"]
+    port = result["port"]
     mongo_client = pymongo.MongoClient(MONGO_URI)
     targets_collection = mongo_client.sc4snmp.targets
     updates = []
 
     current_target = targets_collection.find_one(
-        {"address": address}, {"attributes": True, "target": True, "sysUpTime": True}
+        {"address": address, "port": port}, {"attributes": True, "target": True, "sysUpTime": True}
     )
     if not current_target:
         logger.info(f"First time for {address}")
-        current_target = {"address": address}
+        current_target = {"address": address, "port": port}
     else:
         logger.info(f"Not first time for {address}")
 
@@ -109,7 +110,7 @@ def enrich(self, result):
         current_target["attributes"] = {}
 
     # TODO: Compare the ts field with the lastmodified time of record and only update if we are newer
-    check_restart(current_target, result["result"], targets_collection, address)
+    check_restart(current_target, result["result"], targets_collection, address, port)
 
     # First write back to DB new/changed data
     for group_key, group_data in result["result"].items():
@@ -174,7 +175,7 @@ def enrich(self, result):
 
             if len(updates) >= 20:
                 targets_collection.update_one(
-                    {"address": address}, updates, upsert=True
+                    {"address": address, "port": port}, updates, upsert=True
                 )
                 updates.clear()
 

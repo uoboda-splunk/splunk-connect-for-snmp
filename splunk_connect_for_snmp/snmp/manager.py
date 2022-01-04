@@ -55,7 +55,7 @@ UDP_CONNECTION_TIMEOUT = int(os.getenv("UDP_CONNECTION_TIMEOUT", 1))
 logger = get_task_logger(__name__)
 
 
-def get_inventory(mongo_inventory, address):
+def get_inventory(mongo_inventory, address, port):
     ir_doc = mongo_inventory.find_one({"address": address})
     if ir_doc is None:
         raise ValueError(f"Inventory Doc deleted unable to complete task for {address}")
@@ -234,7 +234,7 @@ class Poller(Task):
                 f"Unable to load mib map from index http error {self.mib_response.status_code}"
             )
 
-    def do_work(self, address: str, walk: bool = False, profiles: List[str] = None):
+    def do_work(self, address: str, port: str, walk: bool = False, profiles: List[str] = None):
         if time.time() - self.last_modified > PROFILES_RELOAD_DELAY:
             self.profiles = load_profiles()
             self.last_modified = time.time()
@@ -244,7 +244,7 @@ class Poller(Task):
         mongo_db = mongo_client[MONGO_DB]
         mongo_inventory = mongo_db.inventory
 
-        ir = get_inventory(mongo_inventory, address)
+        ir = get_inventory(mongo_inventory, address, port)
 
         varbinds_get, get_mapping, varbinds_bulk, bulk_mapping = self.get_var_binds(
             walk=walk, profiles=profiles

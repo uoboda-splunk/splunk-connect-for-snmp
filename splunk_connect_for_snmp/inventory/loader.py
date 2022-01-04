@@ -46,12 +46,13 @@ INVENTORY_PATH = os.getenv("INVENTORY_PATH", "/app/inventory/inventory.csv")
 
 def gen_walk_task(ir: InventoryRecord):
     return {
-        "name": f"sc4snmp;{ir.address};walk",
+        "name": f"sc4snmp;{ir.address}:{ir.port};walk",
         "task": "splunk_connect_for_snmp.snmp.tasks.walk",
-        "target": f"{ir.address}",
+        "target": f"{ir.address}:{ir.port}",
         "args": [],
         "kwargs": {
             "address": ir.address,
+            "port": ir.port
         },
         "options": {
             "link": chain(
@@ -96,12 +97,12 @@ def load():
                 ir = InventoryRecord(**source_record)
                 if ir.delete:
                     periodic_obj.disable_tasks(ir.address)
-                    inventory_records.delete_one({"address": ir.address})
-                    targets_collection.remove({"address": ir.address})
+                    inventory_records.delete_one({"address": ir.address, "port": ir.port})
+                    targets_collection.remove({"address": f"{ir.address}:{ir.port}"})
                     logger.info(f"Deleting record: {address}")
                 else:
                     status = inventory_records.update_one(
-                        {"address": ir.address},
+                        {"address": ir.address, "port": ir.port},
                         {"$set": ir.asdict()},
                         upsert=True,
                     )

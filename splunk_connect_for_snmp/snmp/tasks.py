@@ -60,12 +60,13 @@ def walk(self, skip_init=False, **kwargs):
         self.initialize()
 
     address = kwargs["address"]
+    port = kwargs["port"]
     mongo_client = pymongo.MongoClient(MONGO_URI)
 
     lock = MongoLock(client=mongo_client, db="sc4snmp")
 
     with lock(address, self.request.id, expire=300, timeout=300):
-        result = self.do_work(address, walk=True)
+        result = self.do_work(address, port, walk=True)
 
     # After a Walk tell schedule to recalc
     work = {}
@@ -91,11 +92,12 @@ def poll(self, skip_init=False, **kwargs):
         self.initialize()
 
     address = kwargs["address"]
+    port = kwargs["port"]
     profiles = kwargs["profiles"]
     mongo_client = pymongo.MongoClient(MONGO_URI)
     lock = MongoLock(client=mongo_client, db="sc4snmp")
     with lock(kwargs["address"], self.request.id, expire=90, timeout=20):
-        result = self.do_work(address, profiles=profiles)
+        result = self.do_work(address, port, profiles=profiles)
 
     # After a Walk tell schedule to recalc
     work = {}
