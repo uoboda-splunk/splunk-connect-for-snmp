@@ -96,9 +96,9 @@ def load():
             try:
                 ir = InventoryRecord(**source_record)
                 if ir.delete:
-                    periodic_obj.disable_tasks(ir.address)
+                    periodic_obj.disable_tasks(f"{ir.address}:{ir.port}")
                     inventory_records.delete_one({"address": ir.address, "port": ir.port})
-                    targets_collection.remove({"address": f"{ir.address}:{ir.port}"})
+                    targets_collection.remove({"address": ir.address, "port": ir.port})
                     logger.info(f"Deleting record: {address}")
                 else:
                     status = inventory_records.update_one(
