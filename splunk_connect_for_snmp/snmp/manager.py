@@ -15,6 +15,8 @@
 #
 import typing
 
+from splunk_connect_for_snmp.common.helper import return_query_for_host
+
 try:
     from dotenv import load_dotenv
 
@@ -56,9 +58,10 @@ logger = get_task_logger(__name__)
 
 
 def get_inventory(mongo_inventory, address, port):
-    ir_doc = mongo_inventory.find_one({"address": address, "port": port})
+    mongo_query = return_query_for_host(address, port)
+    ir_doc = mongo_inventory.find_one(mongo_query)
     if ir_doc is None:
-        raise ValueError(f"Inventory Doc deleted unable to complete task for {address}:{port}")
+        raise ValueError(f"Inventory Doc deleted unable to complete task for {address}")
     logger.debug(f"{ir_doc}")
     ir_doc.pop("_id", None)
     return InventoryRecord(**ir_doc)

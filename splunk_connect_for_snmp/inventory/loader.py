@@ -23,6 +23,7 @@ import pymongo
 from celery.canvas import chain, group, signature
 
 from splunk_connect_for_snmp import customtaskmanager
+from splunk_connect_for_snmp.common.helper import return_query_for_host, return_task_name
 from splunk_connect_for_snmp.common.inventory_record import (
     InventoryRecord,
 )
@@ -45,14 +46,14 @@ INVENTORY_PATH = os.getenv("INVENTORY_PATH", "/app/inventory/inventory.csv")
 
 
 def gen_walk_task(ir: InventoryRecord):
-    return {
-        "name": f"sc4snmp;{ir.address}:{ir.port};walk",
+    task_name = return_task_name(ir.address, ir.port)
+    task = {
+        "name": f"sc4snmp;{task_name};walk",
         "task": "splunk_connect_for_snmp.snmp.tasks.walk",
-        "target": f"{ir.address}:{ir.port}",
+        "target": task_name,
         "args": [],
         "kwargs": {
-            "address": ir.address,
-            "port": ir.port
+            "address": ir.address
         },
         "options": {
             "link": chain(
@@ -72,6 +73,9 @@ def gen_walk_task(ir: InventoryRecord):
         "enabled": True,
         "run_immediately": True,
     }
+    if int(ir.port) is not 161:
+        task["kwargs"]["port"] = ir.port
+    return task
 
 
 def load():
@@ -95,14 +99,16 @@ def load():
                 continue
             try:
                 ir = InventoryRecord(**source_record)
+                mongo_query = return_query_for_host(ir.address, ir.port)
                 if ir.delete:
-                    periodic_obj.disable_tasks(f"{ir.address}:{ir.port}")
-                    inventory_records.delete_one({"address": ir.address, "port": ir.port})
-                    targets_collection.remove({"address": ir.address, "port": ir.port})
-                    logger.info(f"Deleting record: {address}")
+                    task_name = f"{ir.address}:{ir.port}" if int(ir.port) != 161 else ir.address
+                    periodic_obj.disable_tasks(task_name)
+                    inventory_records.delete_one(mongo_query)
+                    targets_collection.remove(mongo_query)
+                    logger.info(f"Deleting record: {task_name}")
                 else:
                     status = inventory_records.update_one(
-                        {"address": ir.address, "port": ir.port},
+                        mongo_query,
                         {"$set": ir.asdict()},
                         upsert=True,
                     )

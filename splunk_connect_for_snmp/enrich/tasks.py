@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 from splunk_connect_for_snmp import customtaskmanager
+from splunk_connect_for_snmp.common.helper import return_query_for_host, return_task_name
 
 try:
     from dotenv import load_dotenv
@@ -53,6 +54,8 @@ def chunk(it, size):
 
 # check if sysUpTime decreased, if so trigger new walk
 def check_restart(current_target, result, targets_collection, address, port):
+    mongo_query = return_query_for_host(address, port)
+    task_name = return_task_name(address, port)
     for group_key, group_dict in result.items():
         if "metrics" in group_dict and SYS_UP_TIME in group_dict["metrics"]:
             sysuptime = group_dict["metrics"][SYS_UP_TIME]
@@ -64,11 +67,11 @@ def check_restart(current_target, result, targets_collection, address, port):
                 logger.debug(f"new_value = {new_value}  old_value = {old_value}")
                 if int(new_value) < int(old_value):
                     task_config = {
-                        "name": f'sc4snmp;{address}:{port};walk',
+                        "name": f'sc4snmp;{task_name};walk',
                         "run_immediately": True,
                     }
                     logger.info(
-                        f'Detected restart of {address}:{port}, triggering walk'
+                        f'Detected restart of {task_name}, triggering walk'
                     )
                     periodic_obj = customtaskmanager.CustomPeriodicTaskManager()
                     periodic_obj.manage_task(**task_config)
@@ -80,7 +83,7 @@ def check_restart(current_target, result, targets_collection, address, port):
             }
 
             targets_collection.update_one(
-                {"address": address, "port": port}, {"$set": {"sysUpTime": state}}, upsert=True
+                mongo_query, {"$set": {"sysUpTime": state}}, upsert=True
             )
 
 
@@ -92,17 +95,19 @@ class EnrichTask(Task):
 @shared_task(bind=True, base=EnrichTask)
 def enrich(self, result):
     address = result["address"]
-    port = result["port"]
+    port = result["port"] if "port" in result else None
+    mongo_query = return_query_for_host(address, port)
+    logger.info(f"Enrich mongo query: {mongo_query}")
     mongo_client = pymongo.MongoClient(MONGO_URI)
     targets_collection = mongo_client.sc4snmp.targets
     updates = []
 
     current_target = targets_collection.find_one(
-        {"address": address, "port": port}, {"attributes": True, "target": True, "sysUpTime": True}
+        mongo_query, {"attributes": True, "target": True, "sysUpTime": True}
     )
     if not current_target:
         logger.info(f"First time for {address}")
-        current_target = {"address": address, "port": port}
+        current_target = mongo_query
     else:
         logger.info(f"Not first time for {address}")
 
@@ -175,7 +180,7 @@ def enrich(self, result):
 
             if len(updates) >= 20:
                 targets_collection.update_one(
-                    {"address": address, "port": port}, updates, upsert=True
+                    mongo_query, updates, upsert=True
                 )
                 updates.clear()
 

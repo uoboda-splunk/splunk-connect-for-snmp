@@ -60,7 +60,7 @@ def walk(self, skip_init=False, **kwargs):
         self.initialize()
 
     address = kwargs["address"]
-    port = kwargs["port"]
+    port = kwargs["port"] if "port" in kwargs else None
     mongo_client = pymongo.MongoClient(MONGO_URI)
 
     lock = MongoLock(client=mongo_client, db="sc4snmp")
@@ -93,7 +93,7 @@ def poll(self, skip_init=False, **kwargs):
         self.initialize()
 
     address = kwargs["address"]
-    port = kwargs["port"]
+    port = kwargs["port"] if "port" in kwargs else None
     profiles = kwargs["profiles"]
     mongo_client = pymongo.MongoClient(MONGO_URI)
     lock = MongoLock(client=mongo_client, db="sc4snmp")

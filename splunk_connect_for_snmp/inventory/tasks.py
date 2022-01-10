@@ -17,6 +17,7 @@ import time
 
 import typing
 
+from splunk_connect_for_snmp.common.helper import return_query_for_host, return_task_name
 from splunk_connect_for_snmp.common.profiles import load_profiles
 from splunk_connect_for_snmp.snmp.manager import get_inventory
 
@@ -58,7 +59,9 @@ class InventoryTask(Task):
 @shared_task(bind=True, base=InventoryTask)
 def inventory_setup_poller(self, work):
     address = work["address"]
-    port = work["port"]
+    port = work["port"] if "port" in work else None
+    mongo_query = return_query_for_host(address, port)
+    task_name = return_task_name(address, port)
     if time.time() - self.last_modified > PROFILES_RELOAD_DELAY:
         self.profiles = load_profiles()
         self.last_modified = time.time()
@@ -75,7 +78,7 @@ def inventory_setup_poller(self, work):
     ir = get_inventory(mongo_inventory, address, port)
 
     target = targets_collection.find_one(
-        {"address": address, "port": port},
+        mongo_query,
         {"target": True, "state": True, "config": True},
     )
     assigned_profiles = assign_profiles(ir, self.profiles, target)
@@ -85,7 +88,7 @@ def inventory_setup_poller(self, work):
         task_config = generate_poll_task_definition(active_schedules, address, port, assigned_profiles, period)
         periodic_obj.manage_task(**task_config)
 
-    periodic_obj.delete_unused_poll_tasks(f"{address}:{port}", active_schedules)
+    periodic_obj.delete_unused_poll_tasks(task_name, active_schedules)
     periodic_obj.delete_disabled_poll_tasks()
 
 
@@ -93,17 +96,17 @@ def generate_poll_task_definition(active_schedules, address, port, assigned_prof
     run_immediately: bool = False
     if period > 300:
         run_immediately = True
-    name = f"sc4snmp;{address}:{port};{period};poll"
+    target = return_task_name(address, port)
+    name = f"sc4snmp;{target};{period};poll"
     period_profiles = set(assigned_profiles[period])
     active_schedules.append(name)
     task_config = {
         "name": name,
         "task": "splunk_connect_for_snmp.snmp.tasks.poll",
-        "target": f"{address}:{port}",
+        "target": target,
         "args": [],
         "kwargs": {
             "address": address,
-            "port": port,
             "profiles": period_profiles,
             "frequency": period,
         },
@@ -120,6 +123,8 @@ def generate_poll_task_definition(active_schedules, address, port, assigned_prof
         "enabled": True,
         "run_immediately": run_immediately,
     }
+    if port:
+        task_config["kwargs"]["port"] = port
     return task_config
 
 
