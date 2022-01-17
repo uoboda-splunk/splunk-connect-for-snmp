@@ -110,8 +110,6 @@ def poll(self, skip_init=False, **kwargs):
 
 @shared_task(bind=True, base=Poller)
 def trap(self, work, skip_init=False):
-    if not skip_init and not self.initialized:
-        self.initialize()
 
     var_bind_table = []
     not_translated_oids = []
