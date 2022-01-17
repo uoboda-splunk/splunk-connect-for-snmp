@@ -214,8 +214,7 @@ class Poller(Task):
         self.mib_map = None
         self.standard_mibs = []
 
-    def initialize(self):
-
+        logger.info(f"INITIALIZED!!!!")
         self.mongo_client = pymongo.MongoClient(MONGO_URI)
 
         self.session = CachedLimiterSession(
@@ -235,22 +234,20 @@ class Poller(Task):
         self.builder = self.snmpEngine.getMibBuilder()
         self.mib_view_controller = view.MibViewController(self.builder)
         compiler.addMibCompiler(self.builder, sources=[MIB_SOURCES])
-
-        # mib_standard_response = self.session.get(f"{MIB_STANDARD}", stream=True)
-        # if mib_standard_response.status_code == 200:
-        #     for line in mib_standard_response.iter_lines():
-        #         if line:
-        #             mib = line.decode("utf-8")
-        #             logger.info(f"MIB: {mib}")
-        #             try:
-        #                 self.builder.loadModules(mib)
-        #                 self.standard_mibs.append(mib)
-        #             except Exception as e:
-        #                 logger.warning(f"An error occurred during loading MIB module: {mib}: {e}")
-        # else:
-        for mib in DEFAULT_STANDARD_MIBS:
-            self.standard_mibs.append(mib)
-            self.builder.loadModules(mib)
+        mib_standard_response = self.session.get(f"{MIB_STANDARD}", stream=True)
+        if mib_standard_response.status_code == 200:
+            for line in mib_standard_response.iter_lines():
+                if line:
+                    mib = line.decode("utf-8")
+                    try:
+                        self.builder.loadModules(mib)
+                        self.standard_mibs.append(mib)
+                    except Exception as e:
+                        logger.warning(f"An error occurred during loading MIB module: {mib}: {e}")
+        else:
+            for mib in DEFAULT_STANDARD_MIBS:
+                self.standard_mibs.append(mib)
+                self.builder.loadModules(mib)
 
         mib_response = self.session.get(f"{MIB_INDEX}")
         self.mib_map = {}

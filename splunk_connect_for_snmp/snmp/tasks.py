@@ -60,9 +60,6 @@ CONFIG_PATH = os.getenv("CONFIG_PATH", "/app/config/config.yaml")
     ),
 )
 def walk(self, skip_init=False, **kwargs):
-    if not skip_init and not self.initialized:
-        self.initialize()
-
     address = kwargs["address"]
     mongo_client = pymongo.MongoClient(MONGO_URI)
 
@@ -93,9 +90,6 @@ def walk(self, skip_init=False, **kwargs):
     expires=30,
 )
 def poll(self, skip_init=False, **kwargs):
-    if not skip_init and not self.initialized:
-        self.initialize()
-
     address = kwargs["address"]
     profiles = kwargs["profiles"]
     mongo_client = pymongo.MongoClient(MONGO_URI)
