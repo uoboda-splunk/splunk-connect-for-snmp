@@ -18,5 +18,7 @@ jobs:
         working-directory: /home/runner/work/splunk-connect-for-snmp
         run: tar -czf splunk-connect-for-snmp.tgz splunk-connect-for-snmp
       - name: debug
-        run: ls -la $GITHUB_WORKSPACE
-
+        run: cp /home/runner/work/splunk-connect-for-snmp/splunk-connect-for-snmp.tgz $GITHUB_WORKSPACE/integration_tests/scripts
+      - uses: hashicorp/setup-terraform@v1
+      - name: Install ansible
+        run: pip install ansible
