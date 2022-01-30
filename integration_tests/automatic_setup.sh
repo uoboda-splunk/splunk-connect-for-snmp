@@ -87,11 +87,11 @@ cd ~/splunk-connect-for-snmp/integration_tests
 echo $(green "Installing SC4SNMP on Kubernetes")
 sudo microk8s helm3 install snmp -f values.yaml ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace
 
-wait_for_pod_initialization
-
-define_python
-
-deploy_poetry
-
-poetry run pytest --splunk_host="localhost" --splunk_password="changeme2" \
-  --trap_external_ip="$(hostname -I | cut -d " " -f1)" --junitxml=result.xml
+#wait_for_pod_initialization
+#
+#define_python
+#
+#deploy_poetry
+#
+#poetry run pytest --splunk_host="localhost" --splunk_password="changeme2" \
+#  --trap_external_ip="$(hostname -I | cut -d " " -f1)" --junitxml=result.xml
