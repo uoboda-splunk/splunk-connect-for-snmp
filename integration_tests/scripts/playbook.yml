@@ -49,8 +49,8 @@
 #  - name: reset ssh connection
 #    meta: reset_connection
 
-#  - name: Change the working directory to somedir/ before executing the command.
-#    command: ./automatic_setup.sh
-#    args:
-#      chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
+  - name: Change the working directory to somedir/ before executing the command.
+    command: ./automatic_setup.sh
+    args:
+      chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
 

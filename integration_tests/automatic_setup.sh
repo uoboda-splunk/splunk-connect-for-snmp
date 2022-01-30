@@ -84,8 +84,8 @@ cd ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp
 microk8s helm3 dep update
 cd ~/splunk-connect-for-snmp/integration_tests
 
-echo $(green "Installing SC4SNMP on Kubernetes")
-sudo microk8s helm3 install snmp -f values.yaml ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace
+#echo $(green "Installing SC4SNMP on Kubernetes")
+#sudo microk8s helm3 install snmp -f values.yaml ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace
 
 #wait_for_pod_initialization
 #
