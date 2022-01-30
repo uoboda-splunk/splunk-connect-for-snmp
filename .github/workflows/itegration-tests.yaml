@@ -22,3 +22,28 @@ jobs:
       - uses: hashicorp/setup-terraform@v1
       - name: Install ansible
         run: pip install ansible
+      - name: Set AWS varaibles in terraform file
+        working-directory: $GITHUB_WORKSPACE/integration_tests/scripts
+        run: envsubst < main.tf.tmpl > main.tf
+        env:
+          AWS_SECURITY_GROUP: ${{ secrets.AWS_SECURITY_GROUP }}
+          AWS_SUBNET: ${{ secrets.AWS_SUBNET }}
+
+      - name: Create AWS tests environment
+        run: terraform init && terrafrom apply -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        working-directory: $GITHUB_WORKSPACE/integration_tests/scripts
+
+      - name: Run Integration tests
+        run: ansible-playbook -v playbook.yml
+        working-directory: $GITHUB_WORKSPACE/integration_tests/scripts
+
+      - name: Destroy AWS tests environment
+        if: always()
+        run: terraform destroy -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        working-directory: $GITHUB_WORKSPACE/integration_tests/scripts
