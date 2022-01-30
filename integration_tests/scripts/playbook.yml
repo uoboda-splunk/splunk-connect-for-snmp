@@ -12,7 +12,7 @@
     apt:
       update_cache: yes
       upgrade: "yes"
-  - name: ensure nginx is at the latest version
+  - name: ensure gcc is at the latest version
     become: yes
     apt:
       name: gcc
