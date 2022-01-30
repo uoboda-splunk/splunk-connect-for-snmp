@@ -80,9 +80,9 @@ sudo microk8s enable helm3 storage dns rbac openebs
 sudo systemctl enable iscsid
 yes $(hostname -I | cut -d " " -f1)/32 | sudo microk8s enable metallb
 
-#cd ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp
-#microk8s helm3 dep update
-#cd ~/splunk-connect-for-snmp/integration_tests
+cd ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp
+microk8s helm3 dep update
+cd ~/splunk-connect-for-snmp/integration_tests
 
 #echo $(green "Installing SC4SNMP on Kubernetes")
 #sudo microk8s helm3 install snmp -f values.yaml ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace
