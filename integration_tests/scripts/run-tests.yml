@@ -1,4 +1,4 @@
-- hosts: bitops_servers
+- hosts: snmp-machine
   vars:
     user: ubuntu
     dir: /home/ubuntu
