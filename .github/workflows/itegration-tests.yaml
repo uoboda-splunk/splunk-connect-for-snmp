@@ -19,3 +19,4 @@ jobs:
         run: tar -czf splunk-connect-for-snmp.tgz splunk-connect-for-snmp
       - name: debug
         run: ls -la $GITHUB_WORKSPACE
+
