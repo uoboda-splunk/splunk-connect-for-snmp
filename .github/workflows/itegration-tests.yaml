@@ -34,8 +34,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         working-directory: ./integration_tests/scripts
 
-      - name: Run Integration tests
+      - name: Setup Integration tests
         run: sleep 30 && ansible-playbook -v playbook.yml
+        working-directory: ./integration_tests/scripts
+
+      - name: Run Integration tests
+        run: ansible-playbook -v run-tests.yml
         working-directory: ./integration_tests/scripts
 
       - name: Destroy AWS test environment

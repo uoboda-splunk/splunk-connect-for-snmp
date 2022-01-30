@@ -54,7 +54,7 @@
     args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
 
-  - name: Change the working directory to somedir/ before executing the command.
+  - name: mikrok8s
     become: yes
     command: microk8s helm3 install snmp -f values.yaml ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace
     args:
