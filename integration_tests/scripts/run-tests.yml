@@ -42,9 +42,3 @@
       sudo microk8s helm3 install snmp -f values.yaml ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace
   args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
-
-  - name: Run mikrok8s command
-    become: yes
-    command: microk8s helm3 install snmp -f values.yaml /home/ubuntu/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace &
-    args:
-      chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
