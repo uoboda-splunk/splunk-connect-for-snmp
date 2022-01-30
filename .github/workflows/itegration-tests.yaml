@@ -1,0 +1,17 @@
+name: ci-main
+on:
+  push:
+    branches:
+      - "test/adding-integration-tests"
+
+
+jobs:
+  run-integration-tests:
+    name: run tests
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, '[run-it]')"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Archieve repository
+        working-directory: $GITHUB_WORKSPACE
+        run: tar -czf splunk-connect-for-snmp.tgz splunk-connect-for-snmp

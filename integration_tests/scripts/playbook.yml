@@ -1,0 +1,55 @@
+- hosts: bitops_servers
+  vars:
+    user: ubuntu
+    dir: /home/ubuntu
+  tasks:
+  - name: Wait 600 seconds, but only start checking after 120 seconds
+    wait_for_connection:
+      delay: 120
+      timeout: 600
+  - name: Update and upgrade apt packages
+    become: yes
+    apt:
+      update_cache: yes
+      upgrade: "yes"
+  - name: ensure nginx is at the latest version
+    become: yes
+    apt:
+      name: gcc
+      state: latest
+  - name: Copying the Directory and its contents
+    copy:
+      src: splunk-connect-for-snmp.tgz
+      dest: "{{ dir }}"
+  - name: Extract splunk-connect-for-snmp.tgz into /tmp/splunk-connect-for-snmp
+    ansible.builtin.unarchive:
+      src: "{{ dir }}/splunk-connect-for-snmp.tgz"
+      dest: "{{ dir }}"
+      remote_src: yes
+  - name: Change the working directory to somedir/ before executing the command.
+    command: ./install_microk8s.sh
+    args:
+      chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
+  - name: Ensure group "docker" exists
+    become: yes
+    group:
+      name: microk8s
+      state: present
+#  - name: Change the working directory to somedir/ before executing the command.
+#    become: yes
+#    command: chown -f -R ubuntu ~/.kube
+  - name: Add ansible user to docker group
+    become: yes
+    user:
+      name: "{{ user }}"
+      groups: microk8s
+      append: yes
+  - name: reset ssh connection
+    meta: reset_connection
+
+  - name: Change the working directory to somedir/ before executing the command.
+    command: ./automatic_setup.sh
+    args:
+      chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
+    environment:
+      - ANSIBLE_RUN: yes

@@ -25,8 +25,19 @@ wait_for_splunk() {
   done
 }
 
+function define_python() {
+  if command -v python &> /dev/null; then
+      PYTHON=python
+  elif command -v python3 &> /dev/null; then
+      PYTHON=python3
+  else
+    echo $(red "Cannot find python command")
+    exit 1
+  fi
+}
+
 deploy_poetry() {
-  curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+  curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | $PYTHON -
   source "$HOME"/.poetry/env
   poetry install
   poetry add -D splunk-sdk
@@ -77,6 +88,8 @@ echo $(green "Installing SC4SNMP on Kubernetes")
 sudo microk8s helm3 install snmp -f values.yaml ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace
 
 wait_for_pod_initialization
+
+define_python
 
 deploy_poetry
 
