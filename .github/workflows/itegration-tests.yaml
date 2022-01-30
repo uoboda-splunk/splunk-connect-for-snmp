@@ -39,7 +39,7 @@ jobs:
         working-directory: ./integration_tests/scripts
 
       - name: Run Integration tests
-        run: ansible-playbook -v playbook.yml
+        run: sleep 30 && ansible-playbook -v playbook.yml
         working-directory: ./integration_tests/scripts
 
       - name: Destroy AWS test environment
