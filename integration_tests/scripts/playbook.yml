@@ -1,4 +1,4 @@
-- hosts: snmp-machine
+- hosts: snmp_machine
   vars:
     user: ubuntu
     dir: /home/ubuntu
