@@ -30,6 +30,8 @@
     command: ./install_microk8s.sh
     args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
+    environment:
+      - ANSIBLE_RUN: yes
   - name: Ensure group "docker" exists
     become: yes
     group:
@@ -51,5 +53,4 @@
     command: ./automatic_setup.sh
     args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
-    environment:
-      - ANSIBLE_RUN: yes
+
