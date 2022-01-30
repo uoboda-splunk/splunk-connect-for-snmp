@@ -25,7 +25,7 @@ jobs:
 #      - name: Install ansible
 #        run: pip install ansible
       - name: Set AWS varaibles in terraform file
-        working-directory: $GITHUB_WORKSPACE/integration_tests/scripts
+        working-directory: ./integration_tests/scripts
         run: envsubst < main.tf.tmpl > main.tf
         env:
           AWS_SECURITY_GROUP: ${{ secrets.AWS_SECURITY_GROUP }}
