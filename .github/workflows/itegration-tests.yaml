@@ -1,4 +1,4 @@
-name: ci-main
+name: integration-tests
 on:
   push:
     branches:
@@ -15,3 +15,5 @@ jobs:
       - name: Archieve repository
         working-directory: $GITHUB_WORKSPACE
         run: tar -czf splunk-connect-for-snmp.tgz splunk-connect-for-snmp
+      - name: debug
+        run: ls -la $GITHUB_WORKSPACE
