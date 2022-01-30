@@ -4,16 +4,7 @@
     dir: /home/ubuntu
   tasks:
   - name: Run automatic_setup.sh
-    command: |
-      sudo apt -y install docker.io
-      cd ~/splunk-connect-for-snmp
-
-      echo $(green "Building Docker image")
-
-      sudo docker build -t snmp-local .
-
-      sudo docker save snmp-local > myimage.tar
-      sudo microk8s ctr image import myimage.tar
+    command: ./automatic_setup.sh
     args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
 
