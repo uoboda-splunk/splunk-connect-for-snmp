@@ -26,7 +26,7 @@
       src: "{{ dir }}/splunk-connect-for-snmp.tgz"
       dest: "{{ dir }}"
       remote_src: yes
-  - name: Change the working directory to somedir/ before executing the command.
+  - name: Run install_microk8s.sh
     command: ./install_microk8s.sh
     args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"

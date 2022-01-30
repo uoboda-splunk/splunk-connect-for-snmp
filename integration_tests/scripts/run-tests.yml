@@ -3,13 +3,13 @@
     user: ubuntu
     dir: /home/ubuntu
   tasks:
-  - name: Change the working directory to somedir/ before executing the command.
+  - name: Run automatic_setup.sh
     command: ./automatic_setup.sh
     args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
 
-  - name: mikrok8s
+  - name: Run mikrok8s command
     become: yes
-    command: microk8s helm3 install snmp -f values.yaml ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace
+    command: "microk8s helm3 install snmp -f values.yaml {{ dir }}/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace"
     args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
