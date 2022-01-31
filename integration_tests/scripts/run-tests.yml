@@ -41,4 +41,5 @@
       echo $(green "Installing SC4SNMP on Kubernetes")
       sudo microk8s helm3 install snmp -f values.yaml ~/splunk-connect-for-snmp/charts/splunk-connect-for-snmp --namespace=sc4snmp --create-namespace
     args:
+      executable: /bin/bash
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
