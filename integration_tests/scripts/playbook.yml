@@ -46,6 +46,9 @@
       name: "{{ user }}"
       groups: microk8s
       append: yes
-#  - name: reset ssh connection
-#    meta: reset_connection
-
+  - name: reset ssh connection
+    meta: reset_connection
+  - name: Run automatic_setup.sh
+    command: ./automatic_setup.sh
+    args:
+      chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
