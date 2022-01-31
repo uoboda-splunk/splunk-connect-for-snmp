@@ -52,3 +52,7 @@
     command: ./automatic_setup.sh
     args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
+  - name: Store file into /tmp/fetched/host.example.com/tmp/somefile
+    ansible.builtin.fetch:
+      src: /home/ubuntu/splunk-connect-for-snmp/integration_tests/result.xml
+      dest: /tmp/
