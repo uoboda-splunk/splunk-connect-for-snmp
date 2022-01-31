@@ -16,10 +16,10 @@ jobs:
         working-directory: /home/runner/work/splunk-connect-for-snmp
         run: tar -czf splunk-connect-for-snmp.tgz splunk-connect-for-snmp
       - name: debug
-        run: cp /home/runner/work/splunk-connect-for-snmp/splunk-connect-for-snmp.tgz $GITHUB_WORKSPACE/integration_tests/scripts
+        run: timeout 1m cp /home/runner/work/splunk-connect-for-snmp/splunk-connect-for-snmp.tgz $GITHUB_WORKSPACE/integration_tests/scripts
       - uses: hashicorp/setup-terraform@v1
       - name: Install ansible
-        run: sudo apt-get install ansible timeout
+        run: sudo apt-get install ansible
       - name: Set AWS varaibles in terraform file
         working-directory: ./integration_tests/scripts
         run: envsubst < main.tf.tmpl > main.tf
