@@ -19,7 +19,7 @@ jobs:
         run: cp /home/runner/work/splunk-connect-for-snmp/splunk-connect-for-snmp.tgz $GITHUB_WORKSPACE/integration_tests/scripts
       - uses: hashicorp/setup-terraform@v1
       - name: Install ansible
-        run: pip install ansible
+        run: pip install ansible==2.9.1
       - name: Set AWS varaibles in terraform file
         working-directory: ./integration_tests/scripts
         run: envsubst < main.tf.tmpl > main.tf
