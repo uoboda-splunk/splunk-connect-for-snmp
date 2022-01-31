@@ -93,5 +93,5 @@ define_python
 
 deploy_poetry
 
-poetry run pytest --splunk_host="localhost" --splunk_password="changeme2" \
-  --trap_external_ip="$(hostname -I | cut -d " " -f1)" --junitxml=result.xml
+#poetry run pytest --splunk_host="localhost" --splunk_password="changeme2" \
+#  --trap_external_ip="$(hostname -I | cut -d " " -f1)" --junitxml=result.xml
