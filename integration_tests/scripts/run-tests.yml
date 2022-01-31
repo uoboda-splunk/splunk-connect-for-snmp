@@ -8,8 +8,6 @@
       sudo apt -y install docker.io
       cd ~/splunk-connect-for-snmp
 
-      echo $(green "Building Docker image")
-
       sudo docker build -t snmp-local .
 
       sudo docker save snmp-local > myimage.tar
@@ -19,7 +17,6 @@
       echo $(green "Running Splunk in Docker")
       sudo docker run -d -p 8000:8000 -p 8088:8088 -p 8089:8089 -e SPLUNK_START_ARGS='--accept-license' -e SPLUNK_PASSWORD='changeme2' splunk/splunk:latest
       while [ "$(sudo docker ps | grep "splunk:latest" | grep healthy)" == "" ] ; do
-        echo $(yellow "Waiting for Splunk initialization")
         sleep 1
       done
       cd integration_tests
