@@ -35,7 +35,7 @@ jobs:
         working-directory: ./integration_tests/scripts
 
       - name: Setup Integration tests
-        run: sleep 30 && timeout 25m ansible-playbook -v playbook.yml || true
+        run: sleep 30 && timeout 25m ansible-playbook -vvvv playbook.yml || true
         working-directory: ./integration_tests/scripts
       - run: ls -la ./integration_tests/scripts
       - run: ls -la ./integration_tests/
