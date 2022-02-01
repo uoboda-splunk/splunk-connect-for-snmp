@@ -54,7 +54,7 @@ resource "aws_instance" "snmp-test" {
 }
 
 resource "aws_iam_instance_profile" "snmp_profile" {
-  name = "snmp-$GITHUB_RUN_ID""
+  name = "snmp-$GITHUB_RUN_ID"
   role = "snmp-integration-tests"
 }
 
