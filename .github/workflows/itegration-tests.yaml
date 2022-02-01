@@ -19,9 +19,9 @@ jobs:
         run: timeout 1m cp /home/runner/work/splunk-connect-for-snmp/splunk-connect-for-snmp.tgz $GITHUB_WORKSPACE/integration_tests/scripts
       - uses: hashicorp/setup-terraform@v1
       - name: Install ansible
-        run: sudo apt-get install ansible awscli
-      - name: Install junitparser
-        run: pip install junitparser
+        run: sudo apt-get install ansible
+      - name: Install python packages
+        run: pip install junitparser awscli
       - name: Set AWS varaibles in terraform file
         working-directory: ./integration_tests/scripts
         run: envsubst < main.tf.tmpl > main.tf
