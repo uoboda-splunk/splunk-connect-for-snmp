@@ -17,6 +17,11 @@
     apt:
       name: gcc
       state: latest
+  - name: ensure awscli is at the latest version
+    become: yes
+    apt:
+      name: awscli
+      state: latest
   - name: Copying the Directory and its contents
     copy:
       src: splunk-connect-for-snmp.tgz
@@ -52,7 +57,3 @@
     command: ./automatic_setup.sh
     args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
-  - name: Store file into /tmp/fetched/host.example.com/tmp/somefile
-    ansible.builtin.fetch:
-      src: /home/ubuntu/splunk-connect-for-snmp/integration_tests/result.xml
-      dest: /tmp/
