@@ -20,6 +20,8 @@ jobs:
       - uses: hashicorp/setup-terraform@v1
       - name: Install ansible
         run: sudo apt-get install ansible awscli
+      - name: Install junitparser
+        run: pip install junitparser
       - name: Set AWS varaibles in terraform file
         working-directory: ./integration_tests/scripts
         run: envsubst < main.tf.tmpl > main.tf
@@ -37,21 +39,14 @@ jobs:
       - name: Setup Integration tests
         run: sleep 30 && timeout 25m ansible-playbook -vvvv playbook.yml || true
         working-directory: ./integration_tests/scripts
+
       - name: Download and analyze logs
         run: |
-          aws s3 cp s3://snmp-integration-tests/$GITHUB_RUN_ID/result.xml . && cat results.xml
+          aws s3 cp s3://snmp-integration-tests/$GITHUB_RUN_ID/result.xml . && cat result.xml
           aws s3 cp s3://snmp-integration-tests/$GITHUB_RUN_ID/pytest.log . && cat pytest.log
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-#      - name: Run Integration tests
-#        run: timeout 10m ansible-playbook -vvvv run-tests.yml
-#        working-directory: ./integration_tests/scripts
-
-#      - name: Run Integration tests
-#        run: ansible-playbook -v run-tests.yml
-#        working-directory: ./integration_tests/scripts
 
       - name: Destroy AWS test environment
         if: always()
@@ -60,3 +55,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         working-directory: ./integration_tests/scripts
+
+      - run: python result_analyzer.py

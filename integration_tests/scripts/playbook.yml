@@ -43,9 +43,6 @@
     group:
       name: microk8s
       state: present
-#  - name: Change the working directory to somedir/ before executing the command.
-#    become: yes
-#    command: chown -f -R ubuntu ~/.kube
   - name: Add ansible user to docker group
     become: yes
     user:
