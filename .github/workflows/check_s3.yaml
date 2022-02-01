@@ -9,7 +9,7 @@ jobs:
     name: run tests
     runs-on: ubuntu-latest
     steps:
-      - run: awscli
+      - run: sudo apt-get install awscli
       - run: |
           export SAD=1780785521
           aws s3 cp s3://snmp-integration-tests/$SAD/result.xml . && cat result.xml
