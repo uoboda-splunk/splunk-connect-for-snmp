@@ -35,6 +35,7 @@ resource "aws_instance" "snmp-test" {
   instance_type               = "m5.xlarge"
   key_name                    = aws_key_pair.aws_key.key_name
   monitoring                  = true
+  iam_instance_profile        = aws_iam_instance_profile.snmp_profile.name
   vpc_security_group_ids      = ["$AWS_SECURITY_GROUP"]
   subnet_id                   = "$AWS_SUBNET"
   associate_public_ip_address = true
@@ -52,9 +53,14 @@ resource "aws_instance" "snmp-test" {
   }
 }
 
+resource "aws_iam_instance_profile" "snmp_profile" {
+  name = "snmp"
+  role = "snmp-integration-tests"
+}
+
 resource "local_file" "private_key" {
   sensitive_content = tls_private_key.key.private_key_pem
-  filename          = format("%s/%s/%s", abspath(path.root), ".ssh", "snmp-machine-ssh-key.pem")
+  filename          = format("%s/%s/%s", abspath(path.root), ".ssh", "snmp-ssh-key.pem")
   file_permission   = "0600"
 }
 
