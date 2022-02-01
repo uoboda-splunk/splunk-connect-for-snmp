@@ -2,6 +2,7 @@
   vars:
     user: ubuntu
     dir: /home/ubuntu
+    s3_path: {{ lookup('env', '$GITHUB_RUN_ID') }}
   tasks:
   - name: Wait 600 seconds, but only start checking after 120 seconds
     wait_for_connection:
@@ -57,3 +58,5 @@
     command: ./automatic_setup.sh
     args:
       chdir: "{{ dir }}/splunk-connect-for-snmp/integration_tests/"
+    environment:
+      S3_PATH: "{{ s3_path }}"
